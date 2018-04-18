@@ -4,8 +4,9 @@
 using namespace std;
 ifstream file;
 
-struct Facet
+class Facet
 {
+public:
     double norm_x;
     double norm_y;
     double norm_z;
@@ -24,75 +25,144 @@ struct Facet
 };
 
 void init_file(){
-
     file.open ("program1.stl");
+}
+bool parse_normal(std::ifstream& file, Facet& facet){
     std::string word;
-
-// read "solid"
-    std::getline(file, word);
-    cout << "HEADER: "<<word<<endl;
-//end read "solid"
-
-//    while (file >> word)
-//    {
-//        cout <<"WRD: "<< word <<endl;
-//    }
+    if ((file >> word) && (word == "normal")){
+        if(file >> word){
+            cout<<"DBL1:"<<word<<endl;
+            facet.norm_x = atof(word.c_str());
+            if(file >> word){
+                cout<<"DBL2:"<<word<<endl;
+                facet.norm_y = atof(word.c_str());
+                if(file >> word){
+                    cout<<"DBL3:"<<word<<endl;
+                    facet.norm_z = atof(word.c_str());
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+bool parse_outer_loop(std::ifstream& file){
+    std::string word;
+    if ((file >> word) && (word == "outer")
+      &&(file >> word) && (word == "loop")){
+        return true;
+    }
+    else
+        return false;
 }
 
-/*
- * res_code:
- *      0 - ok
- *     -1 - end of steam
- *     -2 - corrupted format
-*/
-void read_facet(std::ifstream& file, Facet& facet, int& res_code){
+bool parse_vertex(int n, std::ifstream& file, Facet& facet){
     std::string word;
-    if (file >> word)
+    if ((file >> word) && (word == "vertex")){
+        if(file >> word){
+            cout<<"VDBL1: --"<<n<<"--"<<word<<endl;
+            facet.ver1_x = atof(word.c_str());
+            if(file >> word){
+                cout<<"VDBL2: --"<<n<<"--"<<word<<endl;
+                facet.ver1_y = atof(word.c_str());
+                if(file >> word){
+                    cout<<"VDBL3: --"<<n<<"--"<<word<<endl;
+                    facet.ver1_z = atof(word.c_str());
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+bool parse_endloop(std::ifstream& file){
+    std::string word;
+    if ((file >> word) && (word == "endloop"))
     {
-        res_code = 0;
-        cout <<"TKN: "<< word <<endl;
+        return true;
+    }
+    else
+        return false;
+}
+bool parse_endfacet(std::ifstream& file){
+    std::string word;
+    if ((file >> word) && (word == "endfacet"))
+    {
+        return true;
+    }
+    else
+        return false;
+}
+bool parse_facet(std::ifstream& file, Facet& facet){
+    if(parse_normal(file, facet)
+            && parse_outer_loop(file)
+            &&parse_vertex(1, file, facet)
+            &&parse_vertex(2, file, facet)
+            &&parse_vertex(3, file, facet)
+            &&parse_endloop(file)
+            &&parse_endfacet(file)){
+        return true;
     }
     else{
-        res_code = -1;
+        return false;
     }
 }
+void process_facet(const Facet& facet){
+    cout << std::scientific;
+    std::cout.precision(6);
 
-//void make_csv(){
-//    std::fstream file(CSV_PATH, std::ios::out); // | std::ios::app);
-//    if (!file){
-//        cerr<< "Failed to open a file"<<endl;
-//        return;
-//    }
-//      double step = (xArray[N]-xArray[0])/NUM_OF_SEG_CSV;
-//      for(int i = 1; i <= N; i++){
-//          double x = xArray[i-1];
-//          file<<x<<" "<<s(i, x)<<endl;
-//          x+=step;
-//          while(x < xArray[i]){
-//              file<<x<<" "<<s(i, x)<<endl;
-//              x+=step;
-//          }
-//      }
-//      file<<xArray[N]<<" "<<s(N, xArray[N])<<endl;
-//      file.close();
+    cout<<"!!!!!!!!!!! FACET !!!!!!!!!!!!!!"<<endl;
+    cout<<"Norm x:"<<facet.norm_x<<endl;
+    cout<<"Norm y:"<<facet.norm_y<<endl;
+    cout<<"Norm z:"<<facet.norm_z<<endl;
 
-//}
+    cout<<"Ver1 x:"<<facet.ver1_x<<endl;
+    cout<<"Ver1 y:"<<facet.ver1_y<<endl;
+    cout<<"Ver1 z:"<<facet.ver1_z<<endl;
 
-void write_to_csv(double angle, double square){
+    cout<<"Ver2 x:"<<facet.ver2_x<<endl;
+    cout<<"Ver2 y:"<<facet.ver2_y<<endl;
+    cout<<"Ver2 z:"<<facet.ver2_z<<endl;
+
+    cout<<"Ver3 x:"<<facet.ver3_x<<endl;
+    cout<<"Ver3 y:"<<facet.ver3_y<<endl;
+    cout<<"Ver3 z:"<<facet.ver3_z<<endl;
 
 }
+bool execute(){
+    std::string word;
+    if ((file >> word) && (word == "solid")){
+        std::getline(file, word); //skip line
+        cout << "SOLID: "<<word<<endl;
 
+        while ((file >> word) && (word == "facet")) {
+            Facet facet;
+            if(!parse_facet(file, facet))
+                return false;
+             else{
+                process_facet(facet);
+            }
+        }
+
+        if(word == "endsolid"){
+            cout << "ENDSOLID"<<endl;
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    else
+        return false;
+}
 
 int main()
 {
     cout << "Hello World!" << endl;
 
     init_file();
-
-    Facet facet;
-    int res_code;
-    read_facet(file, facet,res_code);
-    cout << res_code;
+     bool localProcess = execute();
+    cout << "PROCESS: "<< localProcess <<endl;
 
     return 0;
 }
