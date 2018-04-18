@@ -5,8 +5,10 @@ CONFIG -= qt
 
 SOURCES += main.cpp \
     facet.cpp \
-    triplet.cpp
+    triplet.cpp \
+    process.cpp
 
 HEADERS += \
     facet.h \
-    triplet.h
+    triplet.h \
+    process.h

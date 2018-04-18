@@ -31,10 +31,7 @@ Triplet& Facet::getVer2()
 }
 
 void Facet::setVer2(double x, double y, double z)
-{//    norm = Triplet();
-    //    ver1 = Triplet();
-    //    ver2 = Triplet();
-    //    ver3 = Triplet();
+{
     ver2.setX(x);
     ver2.setY(y);
     ver2.setZ(z);
@@ -68,9 +65,5 @@ Triplet& Facet::getVertex(int n)
 
 Facet::Facet()
 {
-//    norm = Triplet();
-//    ver1 = Triplet();
-//    ver2 = Triplet();
-//    ver3 = Triplet();
 }
 
