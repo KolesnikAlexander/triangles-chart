@@ -1,44 +1,48 @@
 #include <iostream>
 #include <fstream>
+#include "facet.h"
 
 using namespace std;
 ifstream file;
 
-class Facet
-{
-public:
-    double norm_x;
-    double norm_y;
-    double norm_z;
+//class Facet
+//{
+//public:
+//    double norm_x;
+//    double norm_y;
+//    double norm_z;
 
-    double ver1_x;
-    double ver1_y;
-    double ver1_z;
+//    double ver1_x;
+//    double ver1_y;
+//    double ver1_z;
 
-    double ver2_x;
-    double ver2_y;
-    double ver2_z;
+//    double ver2_x;
+//    double ver2_y;
+//    double ver2_z;
 
-    double ver3_x;
-    double ver3_y;
-    double ver3_z;
-};
+//    double ver3_x;
+//    double ver3_y;
+//    double ver3_z;
+//};
 
 void init_file(){
     file.open ("program1.stl");
 }
 bool parse_normal(std::ifstream& file, Facet& facet){
+    double x, y, z;
     std::string word;
     if ((file >> word) && (word == "normal")){
         if(file >> word){
             cout<<"DBL1:"<<word<<endl;
-            facet.norm_x = atof(word.c_str());
+            x = atof(word.c_str());
             if(file >> word){
                 cout<<"DBL2:"<<word<<endl;
-                facet.norm_y = atof(word.c_str());
+                y = atof(word.c_str());
+                cout<<"NORM ATOF_Y: "<<y<<endl;
                 if(file >> word){
                     cout<<"DBL3:"<<word<<endl;
-                    facet.norm_z = atof(word.c_str());
+                    z = atof(word.c_str());
+                    facet.setNorm(x, y, z);
                     return true;
                 }
             }
@@ -57,17 +61,30 @@ bool parse_outer_loop(std::ifstream& file){
 }
 
 bool parse_vertex(int n, std::ifstream& file, Facet& facet){
+    Triplet& vertex = facet.getVertex(n);
+    double x, y, z;
     std::string word;
     if ((file >> word) && (word == "vertex")){
         if(file >> word){
             cout<<"VDBL1: --"<<n<<"--"<<word<<endl;
-            facet.ver1_x = atof(word.c_str());
+            x = atof(word.c_str());
+            cout<<"ATOF_X"<<x<<endl;
+            vertex.setX(x);
+            //facet.getVertex(n).setX(x);
             if(file >> word){
                 cout<<"VDBL2: --"<<n<<"--"<<word<<endl;
-                facet.ver1_y = atof(word.c_str());
+                y = atof(word.c_str());
+                cout<<"ATOF_Y"<<y<<endl;
+                vertex.setY(y);
+                //facet.getVertex(n).setY(y);
+                cout <<"Vertex field: ----->"<< vertex.getY()<<endl;
                 if(file >> word){
                     cout<<"VDBL3: --"<<n<<"--"<<word<<endl;
-                    facet.ver1_z = atof(word.c_str());
+                    z = atof(word.c_str());
+                    cout<<"ATOF_Z"<<z<<endl;
+                    //facet.getVertex(n).setZ(z);
+                    vertex.setZ(z);
+                    //facet.setVer1(x, y, z);
                     return true;
                 }
             }
@@ -107,26 +124,26 @@ bool parse_facet(std::ifstream& file, Facet& facet){
         return false;
     }
 }
-void process_facet(const Facet& facet){
+void process_facet(Facet& facet){
     cout << std::scientific;
     std::cout.precision(6);
 
     cout<<"!!!!!!!!!!! FACET !!!!!!!!!!!!!!"<<endl;
-    cout<<"Norm x:"<<facet.norm_x<<endl;
-    cout<<"Norm y:"<<facet.norm_y<<endl;
-    cout<<"Norm z:"<<facet.norm_z<<endl;
+    cout<<"Norm x:"<<facet.getNorm().getX()<<endl;
+    cout<<"Norm y:"<<facet.getNorm().getY()<<endl;
+    cout<<"Norm z:"<<facet.getNorm().getZ()<<endl;
 
-    cout<<"Ver1 x:"<<facet.ver1_x<<endl;
-    cout<<"Ver1 y:"<<facet.ver1_y<<endl;
-    cout<<"Ver1 z:"<<facet.ver1_z<<endl;
+    cout<<"Ver1 x:"<<facet.getVer1().getX()<<endl;
+    cout<<"Ver1 y:"<<facet.getVer1().getY()<<endl;
+    cout<<"Ver1 z:"<<facet.getVer1().getZ()<<endl;
 
-    cout<<"Ver2 x:"<<facet.ver2_x<<endl;
-    cout<<"Ver2 y:"<<facet.ver2_y<<endl;
-    cout<<"Ver2 z:"<<facet.ver2_z<<endl;
+    cout<<"Ver2 x:"<<facet.getVer2().getX()<<endl;
+    cout<<"Ver2 y:"<<facet.getVer2().getY()<<endl;
+    cout<<"Ver2 z:"<<facet.getVer2().getZ()<<endl;
 
-    cout<<"Ver3 x:"<<facet.ver3_x<<endl;
-    cout<<"Ver3 y:"<<facet.ver3_y<<endl;
-    cout<<"Ver3 z:"<<facet.ver3_z<<endl;
+    cout<<"Ver3 x:"<<facet.getVer3().getX()<<endl;
+    cout<<"Ver3 y:"<<facet.getVer3().getY()<<endl;
+    cout<<"Ver3 z:"<<facet.getVer3().getZ()<<endl;
 
 }
 bool execute(){
@@ -136,11 +153,11 @@ bool execute(){
         cout << "SOLID: "<<word<<endl;
 
         while ((file >> word) && (word == "facet")) {
-            Facet facet;
-            if(!parse_facet(file, facet))
+            Facet* facet = new Facet();
+            if(!parse_facet(file, *facet))
                 return false;
              else{
-                process_facet(facet);
+                process_facet(*facet);
             }
         }
 
