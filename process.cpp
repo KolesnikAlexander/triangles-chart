@@ -34,7 +34,8 @@ double process::angle(Facet &facet){
 
     double teta;
     if(sqrsum == 0){
-        teta = 90;
+        teta = 3.1415926/2; // PI/2
+        cout<<"LOL"<<endl;
     }
     else{
         tanTeta = z/sqrsum;

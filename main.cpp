@@ -4,11 +4,25 @@
 #include "process.h"
 
 using namespace std;
-ifstream file;
 
-void init_file(){
-    file.open ("bunny.stl");
+string OUTPUT_FILE_PATH = "out.csv";
+string INPUT_FILE_PATH = "in.stl";
+
+ifstream input_file;
+ofstream output_file;
+
+bool open_files(){
+//    std::ifstream input_file(INPUT_FILE_PATH, std::ios::in);
+    input_file.open (INPUT_FILE_PATH.c_str(), ios::in);
+    if(!input_file)
+     {
+         cout<<"Put \""<<INPUT_FILE_PATH<<"\" in a current dirrectory"<<endl;
+         return false;
+     }
+     return true;
+    output_file.open(OUTPUT_FILE_PATH.c_str(), ios::out);
 }
+
 bool parse_normal(std::ifstream& file, Facet& facet){
     double x, y, z;
     std::string word;
@@ -121,11 +135,11 @@ void process_facet(Facet& facet){
 
 bool execute(){
     std::string word;
-    if ((file >> word) && (word == "solid")){
-        std::getline(file, word); //skip line
-        while ((file >> word) && (word == "facet")) {
+    if ((input_file >> word) && (word == "solid")){
+        std::getline(input_file, word); //skip line
+        while ((input_file >> word) && (word == "facet")) {
             Facet* facet = new Facet();
-            if(!parse_facet(file, *facet))
+            if(!parse_facet(input_file, *facet))
                 return false;
              else{
                 process_facet(*facet);
@@ -142,11 +156,23 @@ bool execute(){
         return false;
 }
 
+void makeCSV(){
+    std::fstream file(OUTPUT_FILE_PATH, std::ios::out);
+    if (!file){
+        cerr<< "Failed to open a file"<<endl;
+        return;
+    }
+//      file<<xArray[N]<<" "<<s(N, xArray[N])<<endl;
+      file.close();
+}
+
 int main()
 {
     cout << "Hello World!" << endl;
 
-    init_file();
+    if(!open_files())
+        return 0;
+
     process::init();
 
     bool res = execute();
