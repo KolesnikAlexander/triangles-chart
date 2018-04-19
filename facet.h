@@ -12,7 +12,6 @@ public:
     Triplet ver3;
 
     Facet();
-    ~Facet();
 
     Triplet& getNorm();
     void setNorm(double x, double y, double z);

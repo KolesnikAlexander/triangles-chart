@@ -6,9 +6,11 @@ CONFIG -= qt
 SOURCES += main.cpp \
     facet.cpp \
     triplet.cpp \
-    process.cpp
+    process.cpp \
+    parse.cpp
 
 HEADERS += \
     facet.h \
     triplet.h \
-    process.h
+    process.h \
+    parse.h

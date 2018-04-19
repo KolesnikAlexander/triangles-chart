@@ -1,7 +1,6 @@
 #ifndef TRIPLET_H
 #define TRIPLET_H
 
-
 class Triplet
 {
 public:
