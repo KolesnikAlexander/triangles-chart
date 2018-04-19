@@ -4,7 +4,7 @@
 namespace process {
 
     extern double squares[181];// from -90 to 90
-    double init();
+    void init();
     double process(Facet& facet);
     double angle(Facet &facet);
     double triangle_area(Facet &facet);

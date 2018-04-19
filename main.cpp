@@ -6,7 +6,7 @@
 using namespace std;
 
 string OUTPUT_FILE_PATH = "out.csv";
-string INPUT_FILE_PATH = "in.stl";
+string INPUT_FILE_PATH = "bunny.stl";
 
 ifstream input_file;
 ofstream output_file;
@@ -20,7 +20,12 @@ bool open_files(){
          return false;
      }
      return true;
-    output_file.open(OUTPUT_FILE_PATH.c_str(), ios::out);
+//    output_file.open(OUTPUT_FILE_PATH.c_str(), ios::out);
+//    if(!output_file)
+//     {
+//         cout<<"Put \""<<OUTPUT_FILE_PATH<<"\" in a current dirrectory"<<endl;
+//         return false;
+//     }
 }
 
 bool parse_normal(std::ifstream& file, Facet& facet){
@@ -156,18 +161,36 @@ bool execute(){
         return false;
 }
 
+//void write_to_csv(){
+//    for(int i = 0; i < 181;i++){
+//        output_file<< i - 90 <<", "<< process::squares[i]<<endl;
+//    }
+
+//      output_file.close();
+//}
 void makeCSV(){
-    std::fstream file(OUTPUT_FILE_PATH, std::ios::out);
+    std::fstream file(OUTPUT_FILE_PATH.c_str(), std::ios::out); // | std::ios::app);
     if (!file){
         cerr<< "Failed to open a file"<<endl;
         return;
     }
-//      file<<xArray[N]<<" "<<s(N, xArray[N])<<endl;
-      file.close();
-}
+output_file<<"LOL"<<endl;
 
+        for(int i = 0; i < 181;i++){
+            output_file<< i - 90 <<", "<< process::squares[i]<<endl;
+        }
+
+          output_file.close();
+
+}
 int main()
 {
+    Facet* facet = new Facet();
+    facet->setVer1(0, 0, 0);
+    facet->setVer2(1, 0, 0);
+    facet->setVer3(0, 1, 0);
+    cout<<"TRIANGLE AREA:"<<process::triangle_area(*facet)<<endl;
+    //TEST
     cout << "Hello World!" << endl;
 
     if(!open_files())
@@ -181,6 +204,8 @@ int main()
         cout << i - 90 <<": "<< process::squares[i]<<endl;
     }
     cout << "PROCESS: "<< res <<endl;
+
+    makeCSV();
 
     return 0;
 }
