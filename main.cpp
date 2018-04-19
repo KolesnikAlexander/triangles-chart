@@ -7,7 +7,7 @@
 using namespace std;
 
 string OUTPUT_FILE_PATH = "out.csv";
-string INPUT_FILE_PATH = "box.stl";
+string INPUT_FILE_PATH = "bunny.stl";
 
 ifstream input_file;
 ofstream output_file;
@@ -23,7 +23,7 @@ bool open_inp_file(){
 
 void process_facet(Facet& facet){
     int angle = process::angle(facet); //degrees
-    double area = process::triangle_area(facet);
+    double area = process::area(facet);
     process::squares[angle+90] += area;//from -90 to 90, shifted right in the array
 }
 

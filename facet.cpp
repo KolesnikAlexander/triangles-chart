@@ -1,55 +1,55 @@
 #include "facet.h"
 #include<iostream>
 
-Triplet& Facet::getNorm()
+Vector& Facet::getNorm()
 {
     return norm;
 }
 
 void Facet::setNorm(double x, double y, double z)
 {
-    norm.setX(x);
-    norm.setY(y);
-    norm.setZ(z);
+    norm.set_x(x);
+    norm.set_y(y);
+    norm.set_z(z);
 }
 
-Triplet& Facet::getVer1()
+Vector& Facet::getVer1()
 {
     return ver1;
 }
 
 void Facet::setVer1(double x, double y, double z)
 {
-    ver1.setX(x);
-    ver1.setY(y);
-    ver1.setZ(z);
+    ver1.set_x(x);
+    ver1.set_y(y);
+    ver1.set_z(z);
 }
 
-Triplet& Facet::getVer2()
+Vector& Facet::getVer2()
 {
     return ver2;
 }
 
 void Facet::setVer2(double x, double y, double z)
 {
-    ver2.setX(x);
-    ver2.setY(y);
-    ver2.setZ(z);
+    ver2.set_x(x);
+    ver2.set_y(y);
+    ver2.set_z(z);
 }
 
-Triplet& Facet::getVer3()
+Vector& Facet::getVer3()
 {
     return ver3;
 }
 
 void Facet::setVer3(double x, double y, double z)
 {
-    ver3.setX(x);
-    ver3.setY(y);
-    ver3.setZ(z);
+    ver3.set_x(x);
+    ver3.set_y(y);
+    ver3.set_z(z);
 }
 
-Triplet& Facet::getVertex(int n)
+Vector& Facet::getVertex(int n)
 {
     switch (n) {
         case 1:

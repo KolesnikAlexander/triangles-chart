@@ -1,31 +1,31 @@
 #ifndef FACET_H
 #define FACET_H
 
-#include "triplet.h"
+#include "vector.h"
 
 class Facet
 {
 public:
-    Triplet norm;
-    Triplet ver1;
-    Triplet ver2;
-    Triplet ver3;
+    Vector norm;
+    Vector ver1;
+    Vector ver2;
+    Vector ver3;
 
     Facet();
 
-    Triplet& getNorm();
+    Vector& getNorm();
     void setNorm(double x, double y, double z);
 
-    Triplet& getVer1();
+    Vector& getVer1();
     void setVer1(double x, double y, double z);
 
-    Triplet& getVer2();
+    Vector& getVer2();
     void setVer2(double x, double y, double z);
 
-    Triplet& getVer3();
+    Vector& getVer3();
     void setVer3(double x, double y, double z);
 
-    Triplet& getVertex(int n);
+    Vector& getVertex(int n);
 };
 
 #endif // FACET_H

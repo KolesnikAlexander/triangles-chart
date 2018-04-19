@@ -1,53 +1,48 @@
 #include <iostream>
 #include "parse.h"
 
+bool parse_double(std::string str, double& value){
+    try{
+         value = std::stod(str);
+    }catch(const std::invalid_argument& e){
+        return false;
+    }
+    return true;
+}
+
 bool parse_normal(std::ifstream& file, Facet& facet){
     double x, y, z;
     std::string word;
-    if ((file >> word) && (word == "normal")){
-        if(file >> word){
-            x = atof(word.c_str());
-            if(file >> word){
-                y = atof(word.c_str());
-                if(file >> word){
-                    z = atof(word.c_str());
-                    facet.setNorm(x, y, z);
-                    return true;
-                }
-            }
-        }
+    if (((file >> word) && (word == "normal"))
+        &&(file >> word)&&parse_double(word, x)
+        &&(file >> word)&&parse_double(word, y)
+        &&(file >> word)&&parse_double(word, z))
+    {
+        facet.setNorm(x, y, z);
+        return true;
     }
     return false;
 }
 
 bool parse_outer_loop(std::ifstream& file){
     std::string word;
-    if ((file >> word) && (word == "outer")
-      &&(file >> word) && (word == "loop")){
-        return true;
-    }
-    else
-        return false;
+    return ((file >> word) && (word == "outer")
+          &&(file >> word) && (word == "loop"));
 }
 
 bool parse_vertex(int n, std::ifstream& file, Facet& facet){
-    Triplet& vertex = facet.getVertex(n);
+    Vector& vertex = facet.getVertex(n);
     double x, y, z;
     std::string word;
-    if ((file >> word) && (word == "vertex")){
-        if(file >> word){
-            x = atof(word.c_str());
-            vertex.setX(x);
-            if(file >> word){
-                y = atof(word.c_str());
-                vertex.setY(y);
-                if(file >> word){
-                    z = atof(word.c_str());
-                    vertex.setZ(z);
-                    return true;
-                }
-            }
-        }
+    if ((file >> word) && (word == "vertex")
+        &&(file >> word)&&parse_double(word, x)
+        &&(file >> word)&&parse_double(word, y)
+        &&(file >> word)&&parse_double(word, z))
+    {
+        vertex.set_x(x);
+        vertex.set_y(y);
+        vertex.set_z(z);
+        return true;
     }
     return false;
 }
