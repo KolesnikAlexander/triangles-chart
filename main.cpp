@@ -12,7 +12,6 @@ ifstream input_file;
 ofstream output_file;
 
 bool open_files(){
-//    std::ifstream input_file(INPUT_FILE_PATH, std::ios::in);
     input_file.open (INPUT_FILE_PATH.c_str(), ios::in);
     if(!input_file)
      {
@@ -20,12 +19,6 @@ bool open_files(){
          return false;
      }
      return true;
-//    output_file.open(OUTPUT_FILE_PATH.c_str(), ios::out);
-//    if(!output_file)
-//     {
-//         cout<<"Put \""<<OUTPUT_FILE_PATH<<"\" in a current dirrectory"<<endl;
-//         return false;
-//     }
 }
 
 bool parse_normal(std::ifstream& file, Facet& facet){
@@ -169,20 +162,36 @@ bool execute(){
 //      output_file.close();
 //}
 void makeCSV(){
-    std::fstream file(OUTPUT_FILE_PATH.c_str(), std::ios::out); // | std::ios::app);
-    if (!file){
+    std::ofstream output_file(OUTPUT_FILE_PATH.c_str(), std::ios::out); // | std::ios::app);
+    if (!output_file){
         cerr<< "Failed to open a file"<<endl;
         return;
     }
-output_file<<"LOL"<<endl;
 
         for(int i = 0; i < 181;i++){
+            cout<<"I WRITE"<<endl;
             output_file<< i - 90 <<", "<< process::squares[i]<<endl;
         }
 
           output_file.close();
 
 }
+//void makeCSV1(){
+//    std::ofstream file("lol.out", std::ios::out); // | std::ios::app);
+//    if (!file){
+//        cerr<< "Failed to open a file"<<endl;
+//        return;
+//    }
+//output_file<<"LOL"<<endl;
+
+//        for(int i = 0; i < 181;i++){
+//            cout<<"I WRITE"<<endl;
+//            output_file<< i - 90 <<", "<< process::squares[i]<<endl;
+//        }
+
+//          output_file.close();
+
+//}
 int main()
 {
     Facet* facet = new Facet();
