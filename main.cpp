@@ -6,16 +6,15 @@
 using namespace std;
 
 string OUTPUT_FILE_PATH = "out.csv";
-string INPUT_FILE_PATH = "bunny.stl";
+string INPUT_FILE_PATH = "box.stl";
 
 ifstream input_file;
 ofstream output_file;
 
-bool open_files(){
+bool open_inp_file(){
     input_file.open (INPUT_FILE_PATH.c_str(), ios::in);
     if(!input_file)
      {
-         cout<<"Put \""<<INPUT_FILE_PATH<<"\" in a current dirrectory"<<endl;
          return false;
      }
      return true;
@@ -72,63 +71,25 @@ bool parse_vertex(int n, std::ifstream& file, Facet& facet){
 }
 bool parse_endloop(std::ifstream& file){
     std::string word;
-    if ((file >> word) && (word == "endloop"))
-    {
-        return true;
-    }
-    else
-        return false;
+    return ((file >> word) && (word == "endloop"));
 }
 bool parse_endfacet(std::ifstream& file){
     std::string word;
-    if ((file >> word) && (word == "endfacet"))
-    {
-        return true;
-    }
-    else
-        return false;
+    return ((file >> word) && (word == "endfacet"));
 }
 bool parse_facet(std::ifstream& file, Facet& facet){
-    if(parse_normal(file, facet)
+    return (parse_normal(file, facet)
             && parse_outer_loop(file)
             &&parse_vertex(1, file, facet)
             &&parse_vertex(2, file, facet)
             &&parse_vertex(3, file, facet)
             &&parse_endloop(file)
-            &&parse_endfacet(file)){
-        return true;
-    }
-    else{
-        return false;
-    }
+            &&parse_endfacet(file));
 }
 void process_facet(Facet& facet){
-    cout << std::scientific;
-    std::cout.precision(6);
-
-    cout<<"!!!!!!!!!!! FACET !!!!!!!!!!!!!!"<<endl;
-    cout<<"Norm x:"<<facet.getNorm().getX()<<endl;
-    cout<<"Norm y:"<<facet.getNorm().getY()<<endl;
-    cout<<"Norm z:"<<facet.getNorm().getZ()<<endl;
-
-    cout<<"Ver1 x:"<<facet.getVer1().getX()<<endl;
-    cout<<"Ver1 y:"<<facet.getVer1().getY()<<endl;
-    cout<<"Ver1 z:"<<facet.getVer1().getZ()<<endl;
-
-    cout<<"Ver2 x:"<<facet.getVer2().getX()<<endl;
-    cout<<"Ver2 y:"<<facet.getVer2().getY()<<endl;
-    cout<<"Ver2 z:"<<facet.getVer2().getZ()<<endl;
-
-    cout<<"Ver3 x:"<<facet.getVer3().getX()<<endl;
-    cout<<"Ver3 y:"<<facet.getVer3().getY()<<endl;
-    cout<<"Ver3 z:"<<facet.getVer3().getZ()<<endl;
-
-    int angle = process::angle(facet);
-    cout<<"Angle: "<<angle<<endl;
-
+    int angle = process::angle(facet); //degrees
     double area = process::triangle_area(facet);
-    cout<<"Area: "<<area<<endl;
-    process::squares[angle+90] += area;
+    process::squares[angle+90] += area;//from -90 to 90, shifted right in the array
 }
 
 bool execute(){
@@ -137,84 +98,43 @@ bool execute(){
         std::getline(input_file, word); //skip line
         while ((input_file >> word) && (word == "facet")) {
             Facet* facet = new Facet();
-            if(!parse_facet(input_file, *facet))
-                return false;
-             else{
+            if(parse_facet(input_file, *facet))
                 process_facet(*facet);
-            }
+             else
+                return false;
         }
-        if(word == "endsolid"){
-            return true;
-        }
-        else{
-            return false;
-        }
+        return (word == "endsolid");
     }
     else
         return false;
 }
-
-//void write_to_csv(){
-//    for(int i = 0; i < 181;i++){
-//        output_file<< i - 90 <<", "<< process::squares[i]<<endl;
-//    }
-
-//      output_file.close();
-//}
-void makeCSV(){
+bool makeCSV(){
     std::ofstream output_file(OUTPUT_FILE_PATH.c_str(), std::ios::out); // | std::ios::app);
     if (!output_file){
-        cerr<< "Failed to open a file"<<endl;
-        return;
+        return false;
     }
-
-        for(int i = 0; i < 181;i++){
-            cout<<"I WRITE"<<endl;
-            output_file<< i - 90 <<", "<< process::squares[i]<<endl;
-        }
-
-          output_file.close();
-
+    for(int i = 0; i < 181;i++){
+        output_file<< i - 90 <<", "<< process::squares[i]<<endl;
+    }
+    output_file.close();
+    return true;
 }
-//void makeCSV1(){
-//    std::ofstream file("lol.out", std::ios::out); // | std::ios::app);
-//    if (!file){
-//        cerr<< "Failed to open a file"<<endl;
-//        return;
-//    }
-//output_file<<"LOL"<<endl;
-
-//        for(int i = 0; i < 181;i++){
-//            cout<<"I WRITE"<<endl;
-//            output_file<< i - 90 <<", "<< process::squares[i]<<endl;
-//        }
-
-//          output_file.close();
-
-//}
-int main()
-{
-    Facet* facet = new Facet();
-    facet->setVer1(0, 0, 0);
-    facet->setVer2(1, 0, 0);
-    facet->setVer3(0, 1, 0);
-    cout<<"TRIANGLE AREA:"<<process::triangle_area(*facet)<<endl;
-    //TEST
-    cout << "Hello World!" << endl;
-
-    if(!open_files())
-        return 0;
-
+int main(){
+    if(!open_inp_file()){
+        cout<<"Put \""<<INPUT_FILE_PATH<<"\" in a current dirrectory"<<endl;
+        return -1;
+    }
     process::init();
-
-    bool res = execute();
-
+    if(!execute()){
+        cout<<"Corrupted format"<<endl;
+        return -1;
+    }
+    if(!makeCSV()){
+        cerr<< "Failed to create an output file"<<endl;
+        return -1;
+    }
     for(int i = 0; i < 181;i++){
         cout << i - 90 <<": "<< process::squares[i]<<endl;
     }
-    cout << "PROCESS: "<< res <<endl;
-
-    makeCSV();
-
     return 0;
 }
