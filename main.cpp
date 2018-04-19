@@ -6,13 +6,10 @@
 
 using namespace std;
 
+string INPUT_FILE_PATH = "in.stl";
 string OUTPUT_FILE_PATH = "out.csv";
-string INPUT_FILE_PATH = "bunny.stl";
 
-ifstream input_file;
-ofstream output_file;
-
-bool open_inp_file(){
+bool open_inp_file(ifstream& input_file){
     input_file.open (INPUT_FILE_PATH.c_str(), ios::in);
     if(!input_file)
      {
@@ -27,7 +24,7 @@ void process_facet(Facet& facet){
     process::squares[angle+90] += area;//from -90 to 90, shifted right in the array
 }
 
-bool execute(){
+bool execute(ifstream& input_file){
     std::string word;
     if ((input_file >> word) && (word == "solid")){
         std::getline(input_file, word); //skip line
@@ -55,21 +52,22 @@ bool makeCSV(){
     return true;
 }
 int main(){
-    if(!open_inp_file()){
+    ifstream input_file;
+    if(!open_inp_file(input_file)){
         cout<<"Put \""<<INPUT_FILE_PATH<<"\" in a current dirrectory"<<endl;
         return -1;
     }
     process::init();
-    if(!execute()){
+    if(!execute(input_file)){
         cout<<"Corrupted format"<<endl;
         return -1;
     }
+    input_file.close();
     if(!makeCSV()){
         cerr<< "Failed to create an output file"<<endl;
         return -1;
     }
-    for(int i = 0; i < 181;i++){
-        cout << i - 90 <<": "<< process::squares[i]<<endl;
-    }
+    cout<<"Handling \""<<INPUT_FILE_PATH<<"\"..."<<endl;
+    cout<<"Done. The result is in \""<<OUTPUT_FILE_PATH<<"\"."<<endl;
     return 0;
 }
